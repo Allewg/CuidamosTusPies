@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cuidamos Tus Pies | Podología Clínica Avanzada</title>
+  <meta name="description" content="Clínica podológica en San Bernardo. Tratamientos para uñas encarnadas, hongos, pie sano y más. Agenda tu hora hoy." />
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Alpine.js CDN (para menú móvil) -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Swiper.js CDN (carrusel) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <style>
+    /* Scroll suave */
+    html { scroll-behavior: smooth; }
+    
+    /* Carrusel: Llena el espacio restante en Y (aprox. después de header + agenda) */
+    #carrusel {
+      height: calc(100vh - 12rem);
+    }
+    #carrusel .swiper-slide img {
+      height: 100%;
+    }
+    
+    /* Botón WhatsApp flotante */
+    .btn-whatsapp {
+      @apply w-14 h-14 bg-green-500 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-green-600 transition-all;
+    }
+    .btn-up {
+      @apply w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-blue-700 transition-all;
+    }
+
+    /* Estilos para enlaces de nav (centrado de iconos) */
+    .nav-link, .mobile-nav-link {
+      @apply flex items-center gap-1 px-3 py-2 rounded hover:bg-gray-100 text-sm text-gray-700 hover:text-blue-600 transition-colors;
+    }
+    /* Animación icono hamburguesa → X */
+.hamburger-line {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  height: 2px;
+  background: #374151;
+  margin: 3px 0;
+  transform-origin: center;
+}
+.hamburger-open .hamburger-line:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+.hamburger-open .hamburger-line:nth-child(2) {
+  opacity: 0;
+}
+.hamburger-open .hamburger-line:nth-child(3) {
+  transform: rotate(-45deg) translate(7px, -6px);
+}
+
+/* Menú overlay blur */
+.mobile-menu-overlay {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+/* Hover en links móviles */
+.mobile-nav-link:hover {
+  background: linear-gradient(to right, #10b981, #059669);
+  color: white;
+  transform: translateX(4px);
+}
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-gray-50 text-gray-800 font-sans">
+
+<!-- =================================== -->
+<!-- HEADER + NAVBAR (estilizado: icono animado, blur, slide, hovers) -->
+<!-- =================================== -->
+<header class="bg-white shadow-md sticky top-0 z-40">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Contenedor principal con posición relativa -->
+    <div class="flex justify-between items-center h-16 relative">
+
+      <!-- Logo + Nombre -->
+      <a href="#" class="flex items-center space-x-2">
+        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-teal-500 rounded-full flex items-center justify-center text-white font-bold text-xl">
+          P
+        </div>
+        <span class="font-bold text-xl text-gray-800">Cuidamos Tus Pies</span>
+      </a>
+
+      <!-- Menú Desktop (pegado al borde derecho; iconos centrados) -->
+      <nav class="hidden md:flex space-x-1 lg:space-x-4 absolute right-0 pr-8">
+        <a href="#inicio" class="nav-link"><i data-lucide="home"></i> Inicio</a>
+        <a href="#agenda" class="nav-link"><i data-lucide="calendar"></i> Agenda</a>
+        <a href="#servicios" class="nav-link"><i data-lucide="heart-handshake"></i> Servicios</a>
+        <a href="#testimonios" class="nav-link"><i data-lucide="star"></i> Testimonios</a>
+        <a href="#quienes-somos" class="nav-link"><i data-lucide="users"></i> Quiénes Somos</a>
+        <a href="#ubicacion" class="nav-link"><i data-lucide="map-pin"></i> Dónde Estamos</a>
+      </nav>
+
+      <!-- Wrapper para Menú Móvil (Hamburguesa + Desplegable) – Estilizado -->
+      <div x-data="{ open: false }" class="md:hidden relative">
+        <!-- Menú Móvil (Hamburguesa animada) -->
+        <button @click="open = !open" class="p-2 relative">
+          <!-- Icono como 3 líneas para animación CSS -->
+          <div :class="{ 'hamburger-open': open }" class="hamburger w-6 h-6 flex flex-col justify-center items-center cursor-pointer">
+            <span class="hamburger-line w-6"></span>
+            <span class="hamburger-line w-6"></span>
+            <span class="hamburger-line w-6"></span>
+          </div>
+        </button>
+
+        <!-- Menú Móvil Desplegable (blur overlay + slide stagger) -->
+        <div x-show="open" 
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 translate-y-2"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 translate-y-2"
+             x-cloak 
+             class="absolute top-full right-0 w-56 mt-2 bg-white/95 backdrop-blur-md border border-gray-200 shadow-xl rounded-lg py-2 z-50">
+          <nav class="flex flex-col">
+            <a href="#inicio" @click="open = false" class="mobile-nav-link px-4 py-3"><i data-lucide="home" class="w-4 h-4"></i> Inicio</a>
+            <a href="#agenda" @click="open = false" class="mobile-nav-link px-4 py-3"><i data-lucide="calendar" class="w-4 h-4"></i> Agenda</a>
+            <a href="#servicios" @click="open = false" class="mobile-nav-link px-4 py-3"><i data-lucide="heart-handshake" class="w-4 h-4"></i> Servicios</a>
+            <a href="#testimonios" @click="open = false" class="mobile-nav-link px-4 py-3"><i data-lucide="star" class="w-4 h-4"></i> Testimonios</a>
+            <a href="#quienes-somos" @click="open = false" class="mobile-nav-link px-4 py-3"><i data-lucide="users" class="w-4 h-4"></i> Quiénes Somos</a>
+            <a href="#ubicacion" @click="open = false" class="mobile-nav-link px-4 py-3"><i data-lucide="map-pin" class="w-4 h-4"></i> Dónde Estamos</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+  <!-- =================================== -->
+  <!-- SECCIÓN AGENDA CON NOSOTROS (relación 1:3 con carrusel; botón con icono) -->
+  <!-- =================================== -->
+  <section id="agenda" class="bg-gradient-to-br from-blue-50 to-teal-50 py-8 text-center">
+    <div class="max-w-4xl mx-auto px-4">
+      <h1 class="text-3xl md:text-5xl font-bold text-gray-800 mb-4">
+        Podología Clínica Avanzada
+      </h1>
+      <a href="https://wa.me/56912345678?text=Hola,%20quiero%20agendar%20una%20hora" 
+         class="inline-flex items-center mt-6 px-8 py-3 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition transform hover:scale-105 shadow-lg">
+        <i data-lucide="calendar" class="w-5 h-5 mr-2"></i>
+        Agenda tu Hora
+      </a>
+    </div>
+  </section>
+
+  <!-- =================================== -->
+  <!-- CARRUSEL DE IMÁGENES (adaptado para llenar restante en Y con calc) -->
+  <!-- =================================== -->
+  <section id="carrusel" class="overflow-hidden">
+    <div class="swiper h-full">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide"><img src="https://plus.unsplash.com/premium_photo-1661576493711-6ecc5a99a96c?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170" alt="Consulta podológica profesional" class="w-full h-full object-cover" loading="lazy"></div>
+        <div class="swiper-slide"><img src="https://plus.unsplash.com/premium_photo-1661578329699-5ba8837febde?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170" alt="Tratamiento de uñas" class="w-full h-full object-cover" loading="lazy"></div>
+        <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1638202993928-7267aad84c31?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=687" alt="Equipo de podólogos" class="w-full h-full object-cover" loading="lazy"></div>
+        <div class="swiper-slide"><img src="https://plus.unsplash.com/premium_photo-1661322688147-76db73c4f598?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170" alt="Sala limpia y moderna" class="w-full h-full object-cover" loading="lazy"></div>
+        <div class="swiper-slide"><img src="https://plus.unsplash.com/premium_photo-1663090054202-8835fa45fd77?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170" alt="Paciente feliz" class="w-full h-full object-cover" loading="lazy"></div>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </section>
+
+  <!-- =================================== -->
+  <!-- SERVICIOS (servicios 4-5 centrados con max-w-xs + grid justify) -->
+  <!-- =================================== -->
+  <section id="servicios" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">Nuestros Servicios </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
+        
+        <!-- Servicio 1 -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition max-w-sm w-full">
+          <img src="https://plus.unsplash.com/premium_photo-1661576493711-6ecc5a99a96c?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cG9kb2xvZ2lhfGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=500" alt="Pie sano" class="w-full h-48 object-cover" loading="lazy">
+          <div class="p-6 text-center">
+            <h3 class="text-xl font-semibold mb-2">Atención Podológica Básica</h3>
+            <p class="text-gray-600 mb-4">Mantenimiento del pie sano con corte profesional, hidratación y prevención.</p>
+            <a href="https://wa.me/56912345678?text=Hola,%20quiero%20agendar%20atención%20básica" 
+               class="inline-block px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition">Agenda YA!</a>
+          </div>
+        </div>
+
+        <!-- Servicio 2 -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition max-w-sm w-full">
+          <img src="https://plus.unsplash.com/premium_photo-1661577085938-2d933ff4bc1f?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cG9kb2xvZ2lhfGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=500" alt="Uña encarnada" class="w-full h-48 object-cover" loading="lazy">
+          <div class="p-6 text-center">
+            <h3 class="text-xl font-semibold mb-2">Uña Encarnada</h3>
+            <p class="text-gray-600 mb-4">Tratamiento seguro y sin dolor para uñas que crecen hacia dentro.</p>
+            <a href="https://wa.me/56912345678?text=Hola,%20tengo%20uña%20encarnada" 
+               class="inline-block px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition">Agenda YA!</a>
+          </div>
+        </div>
+
+        <!-- Servicio 3 -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition max-w-sm w-full">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQX9miDQMlZ_QsEd1mfACkxeih3xMirfnjcWw&s" alt="Hongos en uñas" class="w-full h-48 object-cover" loading="lazy">
+          <div class="p-6 text-center">
+            <h3 class="text-xl font-semibold mb-2">Hongos en Uñas</h3>
+            <p class="text-gray-600 mb-4">Diagnóstico y tratamiento efectivo con tecnología láser opcional.</p>
+            <a href="https://wa.me/56912345678?text=Hola,%20tengo%20hongos%20en%20las%20uñas" 
+               class="inline-block px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition">Agenda YA!</a>
+          </div>
+        </div>
+
+  </section>
+
+  <!-- =================================== -->
+  <!-- TESTIMONIOS -->
+  <!-- =================================== -->
+  <section id="testimonios" class="py-16 bg-gray-100">
+    <div class="max-w-7xl mx-auto px-4">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">Lo que dicen nuestros pacientes</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-white p-6 rounded-xl shadow">
+          <div class="flex mb-3"><i data-lucide="star" class="w-5 h-5 text-yellow-500 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-500 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-500 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-500 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-500 fill-current"></i></div>
+          <p class="italic text-gray-700">"Excelente atención, mi uña encarnada desapareció en una sola sesión. ¡Recomendado!"</p>
+          <p class="mt-3 font-semibold">- María González</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow">
+          <div class="flex mb-3"><i data-lucide="star" class="w-5 h-5 text-yellow-500 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-500 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-500 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-500 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-500 fill-current"></i></div>
+          <p class="italic text-gray-700">"El brackquet me salvó el pie. Ahora camino sin dolor. ¡Gracias!"</p>
+          <p class="mt-3 font-semibold">- José Ramírez</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow">
+          <div class="flex mb-3"><i data-lucide="star" class="w-5 h-5 text-yellow-500 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-500 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-500 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-500 fill-current"></i><i data-lucide="star" class="w-5 h-5 text-yellow-500 fill-current"></i></div>
+          <p class="italic text-gray-700">"Muy profesional y limpio. Volveré para mi mantenimiento mensual."</p>
+          <p class="mt-3 font-semibold">- Carla Vargas</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================================== -->
+  <!-- QUIÉNES SOMOS -->
+  <!-- =================================== -->
+  <section id="quienes-somos" class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">Quiénes Somos</h2>
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div>
+          <p class="text-lg text-gray-700 leading-relaxed">
+            <strong>Cuidamos Tus Pies</strong> nació en 2018 con la misión de ofrecer podología clínica de excelencia en San Bernardo. 
+            Contamos con un equipo de podólogos certificados, tecnología de punta y un enfoque humano que prioriza tu comodidad.
+          </p>
+          <p class="mt-4 text-lg text-gray-700">
+            Hemos atendido a más de 3.000 pacientes con problemas desde uñas encarnadas hasta deformidades complejas. 
+            Tu salud podológica es nuestra pasión.
+          </p>
+        </div>
+        <div class="grid grid-cols-1 gap-6">
+          <img src="https://images.unsplash.com/photo-1590611936760-eeb9bc598548?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170" alt="Podóloga 1" class="w-full h-48 object-cover rounded-xl shadow-lg" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================================== -->
+  <!-- DÓNDE ESTAMOS -->
+  <!-- =================================== -->
+  <section id="ubicacion" class="py-16 bg-gray-100">
+    <div class="max-w-7xl mx-auto px-4">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">Dónde Estamos</h2>
+      <div class="bg-white p-6 rounded-xl shadow-lg">
+        <p class="text-center font-semibold mb-4">Giaccomo Puccini, San Bernardo, Chile</p>
+        <iframe 
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3324.567890123456!2d-70.712345!3d-33.592167!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9662da7b8f0e7d8d%3A0x8f8e8f8e8f8e8f8e!2sGiaccomo%20Puccini%2C%20San%20Bernardino%2C%20Regi%C3%B3n%20Metropolitana!5e0!3m2!1ses!2scl!4v1234567890!5m2!1ses!2scl" 
+          width="100%" 
+          height="400" 
+          style="border:0;" 
+          allowfullscreen="" 
+          loading="lazy" 
+          referrerpolicy="no-referrer-when-downgrade"
+          class="rounded-lg">
+        </iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================================== -->
+  <!-- FOOTER -->
+  <!-- =================================== -->
+  <footer class="bg-gray-800 text-white py-8 mt-auto">
+    <div class="text-center">
+      <p class="text-sm">© <span id="year"></span> Todos los derechos reservados a <strong>Clínica Cuidamos Tus Pies</strong></p>
+      <p class="text-xs mt-2 text-gray-400">Desarrollado por <span class="font-semibold text-blue-400">Hardwamania</span></p>
+    </div>
+  </footer>
+
+  <!-- =================================== -->
+  <!-- BOTONES FLOTANTES (con texto indicativo y icono phone para WhatsApp; text-black como indicado) -->
+  <!-- =================================== -->
+  <div class="fixed bottom-6 right-6 flex flex-col gap-3 z-50">
+    <a href="https://wa.me/56912345678?text=Hola,%20quiero%20más%20información" 
+       class="btn-whatsapp flex flex-col items-center" 
+       aria-label="Contactar por WhatsApp">
+      <i data-lucide="phone" class="w-7 h-7"></i>
+      <span class="text-xs text-black mt-1 font-semibold"> Contacto </span>
+    </a>
+    <button onclick="window.scrollTo({top:0,behavior:'smooth'})" 
+            class="btn-up flex flex-col items-center" 
+            aria-label="Volver arriba">
+      <i data-lucide="arrow-up" class="w-6 h-6"></i>
+      <span class="text-xs text-black mt-1 font-semibold">Arriba</span>
+    </button>
+  </div>
+
+  <!-- =================================== -->
+  <!-- SCRIPTS FINALES -->
+  <!-- =================================== -->
+  <script>
+    // Inicializar Lucide Icons
+    lucide.createIcons();
+
+    // Inicializar Swiper Carrusel
+    new Swiper('.swiper', {
+      loop: true,
+      autoplay: { delay: 4000, disableOnInteraction: false },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      effect: 'fade',
+      speed: 1000
+    });
+
+    // Año dinámico
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Tailwind clases personalizadas (opcional)
+    document.documentElement.classList.add('scroll-smooth');
+  </script>
+
+  <!-- Alpine.js x-cloak -->
+  <style>[x-cloak] { display: none !important; }</style>
+</body>
+</html>
